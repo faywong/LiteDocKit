@@ -5,3 +5,4 @@
 * https://freefilesync.org/faq.php
 * https://github.com/mneuroth/SciTEQt
 * https://github.com/soimort/SciTE-properties/tree/master/properties
+* https://github.com/mneuroth/QuickScintilla
