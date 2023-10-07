@@ -44,7 +44,6 @@ add_executable(SyncFolder
     configurationpage.cpp
     uiwidgets/ProgressCircle.cpp
     uiwidgets/DisplayQueuedFilesAction.cpp
-    uiwidgets/MarkdownPreviewView.h
     resources.qrc
     translations/syncfolder_zh_CN.ts
     qmarkdowntextedit/highlighter.cpp

@@ -1,5 +1,5 @@
 # syncfolder
-一个支持双向同步的笔记管理软件（目前仅支持 md 格式）
+一个支持双向同步的笔记管理软件（仅支持 md 格式）
 
 # build
 
@@ -16,8 +16,5 @@ cd build
 cmake ..
 ```
 
-# todo
-* https://freefilesync.org/faq.php
-* https://github.com/mneuroth/SciTEQt
-* https://github.com/soimort/SciTE-properties/tree/master/properties
-* https://github.com/mneuroth/QuickScintilla
+# screenshot
+![supper_editor](https://imgur.com/WmWKRHN.png)

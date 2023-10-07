@@ -47,7 +47,7 @@ void HGMarkdownHighlighter::setDefaultStyles()
     QTextCharFormat headers;
     headers.setForeground(QBrush(QColor("#68489A")));
     // 遵循 css 默认 size
-    headers.setFontWeight(QFont::DemiBold);
+    headers.setFontWeight(QFont::Normal);
 
     headers.setToolTip(tr("H1"));
     STY(pmh_H1, headers);

@@ -33,8 +33,9 @@ SOURCES += \
     settingdialog.cpp \
     syncapp.cpp \
     uiwidgets/DisplayQueuedFilesAction.cpp \
-    uiwidgets/MarkdownPreviewView.cpp \
     uiwidgets/ProgressCircle.cpp \
+    3rdparty/scidown/bin/scidown.c \
+    3rdparty/scidown/bin/smartypants.c
 
 INCLUDEPATH += . \
             uiwidgets \
@@ -57,8 +58,9 @@ HEADERS += \
         syncapp.h \
         uiwidgets/CircleProgressBar.h \
         uiwidgets/DisplayQueuedFilesAction.h \
-        uiwidgets/MarkdownPreviewView.h \
-        uiwidgets/ProgressCircle.h
+        uiwidgets/ProgressCircle.h \
+        3rdparty/scidown/bin/scidown.h \
+        3rdparty/scidown/bin/common.h
 
 FORMS +=
 

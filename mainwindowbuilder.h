@@ -43,7 +43,6 @@ int gSplitWeights[] = {
 #include <QStandardItemModel>
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QScrollBar>
-#include <uiwidgets/MarkdownPreviewView.h>
 #include <QtWebEngineWidgets/QWebEngineView>
 #include <QWebEngineSettings>
 #include "settings/settings_def.h"

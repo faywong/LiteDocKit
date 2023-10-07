@@ -528,7 +528,7 @@ void MainWindow::setupMenus() {
     this->addAction(launchSearchAction);
 
     QAction *launchFindFileAction = new QAction(this);
-    launchFindFileAction->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_O);
+    launchFindFileAction->setShortcut(Qt::CTRL | Qt::Key_P);
     connect(launchFindFileAction, SIGNAL(triggered()), this, SLOT(launchFindFileWindow()));
     this->addAction(launchFindFileAction);
 
