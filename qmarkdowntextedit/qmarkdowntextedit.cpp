@@ -55,7 +55,7 @@ QMarkdownTextEdit::QMarkdownTextEdit(QWidget *parent)
 //        qDebug()<<"m_fontList:" << m_fontList;
         if (m_fontList.count() > 0) {
             QFont font = QFont(m_fontList.at(0));
-            int primaryFontSize = SyncFolderSettings::getInt(KEY_LAST_PRIMARY_FONT_SIZE, 16);
+            int primaryFontSize = SyncFolderSettings::getInt(KEY_LAST_PRIMARY_FONT_SIZE, 12);
             font.setPointSize(primaryFontSize);
             this->setFont(font);
             // set the tab stop to the width of 4 spaces in the editor
@@ -65,7 +65,7 @@ QMarkdownTextEdit::QMarkdownTextEdit(QWidget *parent)
         }
     }
 
-    this->setStyleSheet("QWidget {background-color:#FFFFFF; color:#000000; font-weight: 400; selection-background-color:#BACBFA; }");
+    this->setStyleSheet("QWidget {background-color:#FFFFFF; color:#000000; selection-background-color:#928374; }");
 
     // add a layout to the widget
     auto *layout = new QVBoxLayout(this);

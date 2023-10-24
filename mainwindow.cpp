@@ -59,6 +59,10 @@ MainWindow::MainWindow(QWidget *parent, QString *dirPath) :
         /* Check for updates */
         m_updater->checkForUpdates(syncfolderUpdateUrl);
     }
+
+    ui->markdownPreviewView->page()->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
+    ui->markdownPreviewView->page()->settings()->setAttribute(QWebEngineSettings::LocalContentCanAccessFileUrls, true);
+    ui->markdownPreviewView->page()->settings()->setAttribute(QWebEngineSettings::Accelerated2dCanvasEnabled, true);
 }
 
 void MainWindow::onCheckingUpdateFinished(const QString &url) {
@@ -154,11 +158,6 @@ void MainWindow::openFile_l(const QString &filePath, size_t lineNo, bool needSel
             ui->markdownEditor->ensureCursorVisible();
         }
 
-        QString baseDocUrl = QUrl::fromLocalFile(fileInfo.canonicalFilePath()).toString();
-        // TODO:
-//        ui->markdownPreviewView->document()->setMetaInformation(QTextDocument::DocumentUrl,
-//                                                               baseDocUrl);
-//        ui->markdownPreviewView->document()->setBaseUrl(QUrl::fromLocalFile(fileInfo.canonicalFilePath()));
         setDocStatus(fileInfo.fileName(), "");
         SyncFolderSettings::setString(KEY_LAST_FILE, filePath);
         if (needSelect) {
@@ -637,8 +636,10 @@ MainWindow::~MainWindow() {
 
 void MainWindow::updateMarkdownPreview(const QString &html) {
     QFileInfo fileInfo(currentFilePath);
-    QString baseDocUrl = QUrl::fromLocalFile(fileInfo.canonicalFilePath()).toString();
-    qDebug()<<"abcde html: "<<html;
+//    QString baseDocUrl = QUl::fromLocalFile(fileInfo.canonicalFilePath()).toString();
+    QString baseDocUrl = "qrc:/index.html";
+//    qDebug()<<"baseDocUrl: "<< baseDocUrl;
+//    qDebug()<<"transformed html: "<<html;
     ui->markdownPreviewView->setHtml(html, baseDocUrl);
     connect(ui->markdownPreviewView, &QWebEngineView::loadFinished, [&]() {
         QList<int> sizes = ui->splitter->sizes();
