@@ -161,7 +161,8 @@ void MainWindow::openFile_l(const QString &filePath, size_t lineNo, bool needSel
         ui->fileEditor->setUtf8(true);
         ui->fileEditor->setText(text);
 
-        ui->fileEditor->setFirstVisibleLine(lineNo);
+        ui->fileEditor->setCursorPosition(lineNo - 1, 0);
+        ui->fileEditor->setFirstVisibleLine(lineNo - 1);
 
         ui->fileInfo->setText(tr("Size: %1 bytes, %2 chars").arg(fileInfo.size()).arg(text.length()));
 
