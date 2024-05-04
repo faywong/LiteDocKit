@@ -1,5 +1,5 @@
 # syncfolder
-一个支持双向同步的笔记管理软件（仅支持 md 格式）
+一个支持双向同步的笔记管理软件（支持富文本格式 markdown、还有常见 c/c++、bash、bat、lua 等编程语言文件，同时具备向云端同步的能力）
 
 # build
 
@@ -17,4 +17,4 @@ cmake ..
 ```
 
 # screenshot
-![supper_editor](https://imgur.com/WmWKRHN.png)
+![SerenityOS](https://i.imgur.com/T9kWTXB.png)
