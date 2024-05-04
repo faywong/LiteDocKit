@@ -23,7 +23,7 @@ public:
 
 private:
     // gruvbox light mode:
-    QColor bg = QColor("#fbf1c7");
+    QColor bg = QColor("#fdf6e3");
     QColor red = QColor("#cc241d");
     QColor green_106 = QColor("#98971a");
     QColor green_100 = QColor("#79740e");
@@ -33,7 +33,7 @@ private:
     QColor purple = QColor("#b16286");
     QColor aqua = QColor("#689d6a");
     QColor gray = QColor("#7c6f64");
-    QColor orange = QColor("#d65d0e");
+    QColor orange = QColor("#cb4b16");
     QColor fg0 = QColor("#282828");
     QColor fg1 = QColor("#3c3836");
     QColor fg2 = QColor("#504945");
