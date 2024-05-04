@@ -158,8 +158,12 @@ void MainWindow::openFile_l(const QString &filePath, size_t lineNo, bool needSel
         file.open(QFile::ReadOnly | QFile::Text);
         QTextStream fileToRead(&file);
         QString text = fileToRead.readAll();
+        ui->fileEditor->setUtf8(true);
         ui->fileEditor->setText(text);
+
         ui->fileEditor->setFirstVisibleLine(lineNo);
+
+        ui->fileInfo->setText(tr("Size: %1 bytes, %2 chars").arg(fileInfo.size()).arg(text.length()));
 
         if (filePath.endsWith(".md")) {
             ui->fileEditor->setLexer(new MdLexer);
@@ -183,6 +187,7 @@ void MainWindow::openFile_l(const QString &filePath, size_t lineNo, bool needSel
                 ui->fileEditor->setLexer(new QsciLexerHTML);
             } else if (filePath.endsWith(".lua")) {
                 ui->fileEditor->setLexer(new QsciLexerLua);
+                ui->fileEditor->setFolding(QsciScintilla::FoldStyle::BoxedTreeFoldStyle);
             } else if (filePath.endsWith(".cmake") || filePath.endsWith(".cmake.in") || filePath.endsWith("CMakeLists.txt")) {
                 ui->fileEditor->setLexer(new QsciLexerCMake);
             } else if (filePath.endsWith(".sh")) {
@@ -190,6 +195,7 @@ void MainWindow::openFile_l(const QString &filePath, size_t lineNo, bool needSel
             } else if (filePath.endsWith(".bat")) {
                 ui->fileEditor->setLexer(new QsciLexerBatch);
             }
+            ui->fileEditor->setFolding(QsciScintilla::FoldStyle::BoxedTreeFoldStyle);
         }
 
         setDocStatus(fileInfo.fileName(), "");

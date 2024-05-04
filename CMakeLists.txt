@@ -29,6 +29,14 @@ find_package(Qt5 COMPONENTS WebEngineCore REQUIRED)
 find_package(Qt5 COMPONENTS WebEngineWidgets REQUIRED)
 find_package(Qt5 COMPONENTS WebChannel REQUIRED)
 
+# needed for Qt5QScintilla, maybe others
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+find_package(Qt5QScintilla 2.8.0 REQUIRED QUIET)
+IF( QT5QSCINTILLA_FOUND )
+   MESSAGE( STATUS "Found QScintilla-Qt5 header files in ${QT5QSCINTILLA_INCLUDE_DIR}")
+   MESSAGE( STATUS "Found QScintilla-Qt5 libraries: ${QT5QSCINTILLA_LIBRARY}, version: ${QT5QSCINTILLA_VERSION_STRING}")
+ENDIF(QT5QSCINTILLA_FOUND)
+
 FILE(GLOB scidownSrcs 3rdparty/scidown/*.c 3rdparty/scidown/src/*.c 3rdparty/charter/src/*.c
         3rdparty/charter/src/csv_parser/*.c 3rdparty/charter/src/tinyexpr/*.c)
 
@@ -63,7 +71,8 @@ add_executable(SyncFolder
     ${scidownSrcs}
     3rdparty/scidown/bin/scidown.c
     3rdparty/scidown/bin/scidown_md.h uiwidgets/MarkdownPreviewWebPage.cpp uiwidgets/MarkdownPreviewWebPage.h
-    mdLexer.h mdLexer.cpp)
+    mdLexer.h mdLexer.cpp
+    )
 
 target_include_directories(SyncFolder PUBLIC
         .
@@ -76,7 +85,7 @@ target_include_directories(SyncFolder PUBLIC
         3rdparty/QSimpleUpdater
         3rdparty/QSimpleUpdater/include
         3rdparty/QSimpleUpdater/src
-        prebuilt/scintilla/include)
+        ${QT5QSCINTILLA_INCLUDE_DIR})
 
 set_target_properties(SyncFolder PROPERTIES
         CXX_STANDARD 17
@@ -85,4 +94,4 @@ set_target_properties(SyncFolder PROPERTIES
         )
 
 target_link_libraries(SyncFolder Qt5::Widgets Qt5::Concurrent Qt5::Network Qt5::WebEngineCore Qt5::WebEngineWidgets Qt5::WebChannel
-            ${CMAKE_SOURCE_DIR}/prebuilt/libqscintilla2_qt5.a)
+            ${QT5QSCINTILLA_LIBRARY})

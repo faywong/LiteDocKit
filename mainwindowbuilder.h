@@ -58,6 +58,7 @@ public:
     QWebEngineView *markdownPreviewView;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
+    QLabel *fileInfo;
     QHBoxLayout *bodyLayout;
     QSplitter *splitter;
     QTreeView *fileTree;
@@ -172,7 +173,7 @@ public:
             fileTree->hideColumn(i);
         }
 
-        QFont font = QFont();
+        QFont font("Source Code Pro", 9, QFont::Normal);
         int primaryFontSize = SyncFolderSettings::getInt(KEY_LAST_PRIMARY_FONT_SIZE, 12);
         font.setPointSize(primaryFontSize);
         fileTree->setFont(font);
@@ -182,7 +183,16 @@ public:
 
         // create markdown editor
         fileEditor = new QsciScintilla(mainWindow);
-        fileEditor->zoomTo(4);
+
+        fileEditor->setFont(font);
+        fileEditor->setMarginsFont(font);
+        QFontMetrics fontmetrics = QFontMetrics(font);
+        //设置左侧行号栏宽度等
+        fileEditor->setMarginWidth(0, fontmetrics.width("00000"));
+        fileEditor->setMarginLineNumbers(0, true);
+        fileEditor->setCaretLineVisible(true);
+        //设置光标所在行背景色
+        fileEditor->setCaretLineBackgroundColor(Qt::lightGray);
 
         splitter->addWidget(fileEditor);
         splitter->setStretchFactor(mdEditor_INDEX, 3);
@@ -234,6 +244,8 @@ public:
         menuBar->setGeometry(QRect(0, 0, windowWidth, 22));
         mainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar;
+        fileInfo = new QLabel;
+        statusBar->addPermanentWidget(fileInfo);
         mainWindow->setStatusBar(statusBar);
 
 //        statusBar = new QStatusBar(mainWindow);

@@ -93,7 +93,6 @@ private:
     CircleProgressBar *syncProgressBar;
     // 文件操作队列
     QSet<QString> fileOperationQueue;
-
     void showInFolder(const QString &path);
 };
 
