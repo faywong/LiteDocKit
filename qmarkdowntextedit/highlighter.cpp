@@ -27,10 +27,18 @@ HGMarkdownHighlighter::HGMarkdownHighlighter(QsciScintilla *parent,
     timer = new QTimer(this);
     timer->setSingleShot(true);
     timer->setInterval(aWaitInterval);
+}
+
+void HGMarkdownHighlighter::disable() {
+    disconnect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
+    disconnect(document, SIGNAL(textChanged()),
+            this, SLOT(handleContentsChange()));
+}
+
+void HGMarkdownHighlighter::enable() {
     connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
     connect(document, SIGNAL(textChanged()),
             this, SLOT(handleContentsChange()));
-
     this->parse();
 }
 

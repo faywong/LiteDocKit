@@ -41,6 +41,8 @@ public:
     HGMarkdownHighlighter(QsciScintilla *parent, DMEditorDelegate *mainWindow, int aWaitInterval = 50);
     void setStyles(QVector<HighlightingStyle> &styles);
     void highlight(pmh_element **result);
+    void disable();
+    void enable();
 
 signals:
     void parseFinished(pmh_element **result);

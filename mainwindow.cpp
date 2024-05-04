@@ -160,27 +160,36 @@ void MainWindow::openFile_l(const QString &filePath, size_t lineNo, bool needSel
         QString text = fileToRead.readAll();
         ui->fileEditor->setText(text);
         ui->fileEditor->setFirstVisibleLine(lineNo);
-        if (filePath.endsWith(".cpp") || filePath.endsWith(".cc") || filePath.endsWith(".cxx")
-            || filePath.endsWith(".h") || filePath.endsWith(".hpp")) {
-            ui->fileEditor->setLexer(new QsciLexerCPP);
-        } else if (filePath.endsWith(".md")) {
+
+        if (filePath.endsWith(".md")) {
             ui->fileEditor->setLexer(new MdLexer);
             if (_highlighter == nullptr) {
                 _highlighter = new HGMarkdownHighlighter(ui->fileEditor, dynamic_cast<DMEditorDelegate *>(this));
                 connect(_highlighter, SIGNAL(md2htmlFinished(const QString&)), this, SLOT(updateMarkdownPreview(const QString &)), Qt::QueuedConnection);
             }
-        } else if (filePath.endsWith(".xml")) {
-            ui->fileEditor->setLexer(new QsciLexerXML);
-        } else if (filePath.endsWith(".html")) {
-            ui->fileEditor->setLexer(new QsciLexerHTML);
-        } else if (filePath.endsWith(".lua")) {
-            ui->fileEditor->setLexer(new QsciLexerLua);
-        } else if (filePath.endsWith(".cmake") || filePath.endsWith(".cmake.in") || filePath.endsWith("CMakeLists.txt")) {
-            ui->fileEditor->setLexer(new QsciLexerCMake);
-        } else if (filePath.endsWith(".sh")) {
-            ui->fileEditor->setLexer(new QsciLexerBash);
-        } else if (filePath.endsWith(".bat")) {
-            ui->fileEditor->setLexer(new QsciLexerBatch);
+            _highlighter->enable();
+            ui->markdownPreviewView->setVisible(true);
+        } else {
+            ui->markdownPreviewView->setVisible(false);
+            if (_highlighter != nullptr) {
+                _highlighter->disable();
+            }
+            if (filePath.endsWith(".cpp") || filePath.endsWith(".cc") || filePath.endsWith(".cxx")
+                || filePath.endsWith(".h") || filePath.endsWith(".hpp")) {
+                ui->fileEditor->setLexer(new QsciLexerCPP);
+            } else if (filePath.endsWith(".xml")) {
+                ui->fileEditor->setLexer(new QsciLexerXML);
+            } else if (filePath.endsWith(".html")) {
+                ui->fileEditor->setLexer(new QsciLexerHTML);
+            } else if (filePath.endsWith(".lua")) {
+                ui->fileEditor->setLexer(new QsciLexerLua);
+            } else if (filePath.endsWith(".cmake") || filePath.endsWith(".cmake.in") || filePath.endsWith("CMakeLists.txt")) {
+                ui->fileEditor->setLexer(new QsciLexerCMake);
+            } else if (filePath.endsWith(".sh")) {
+                ui->fileEditor->setLexer(new QsciLexerBash);
+            } else if (filePath.endsWith(".bat")) {
+                ui->fileEditor->setLexer(new QsciLexerBatch);
+            }
         }
 
         setDocStatus(fileInfo.fileName(), "");
