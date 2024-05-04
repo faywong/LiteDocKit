@@ -49,9 +49,6 @@ add_executable(SyncFolder
     qmarkdowntextedit/highlighter.cpp
     qmarkdowntextedit/pmh_parser.c
     qmarkdowntextedit/pmh_styleparser.c
-    qmarkdowntextedit/qmarkdowntextedit.cpp
-    qmarkdowntextedit/qplaintexteditsearchwidget.cpp
-    qmarkdowntextedit/qplaintexteditsearchwidget.ui
     qmarkdowntextedit/media.qrc
     3rdparty/QSimpleUpdater/src/Updater.cpp
     3rdparty/QSimpleUpdater/src/Updater.h
@@ -65,7 +62,8 @@ add_executable(SyncFolder
     ISettingPage.h
     ${scidownSrcs}
     3rdparty/scidown/bin/scidown.c
-    3rdparty/scidown/bin/scidown_md.h uiwidgets/MarkdownPreviewWebPage.cpp uiwidgets/MarkdownPreviewWebPage.h)
+    3rdparty/scidown/bin/scidown_md.h uiwidgets/MarkdownPreviewWebPage.cpp uiwidgets/MarkdownPreviewWebPage.h
+    mdLexer.h mdLexer.cpp)
 
 target_include_directories(SyncFolder PUBLIC
         .
@@ -77,7 +75,8 @@ target_include_directories(SyncFolder PUBLIC
         3rdparty/
         3rdparty/QSimpleUpdater
         3rdparty/QSimpleUpdater/include
-        3rdparty/QSimpleUpdater/src)
+        3rdparty/QSimpleUpdater/src
+        prebuilt/scintilla/include)
 
 set_target_properties(SyncFolder PROPERTIES
         CXX_STANDARD 17
@@ -85,4 +84,5 @@ set_target_properties(SyncFolder PROPERTIES
         CXX_EXTENSIONS NO
         )
 
-target_link_libraries(SyncFolder Qt5::Widgets Qt5::Concurrent Qt5::Network Qt5::WebEngineCore Qt5::WebEngineWidgets Qt5::WebChannel)
+target_link_libraries(SyncFolder Qt5::Widgets Qt5::Concurrent Qt5::Network Qt5::WebEngineCore Qt5::WebEngineWidgets Qt5::WebChannel
+            ${CMAKE_SOURCE_DIR}/prebuilt/libqscintilla2_qt5.a)

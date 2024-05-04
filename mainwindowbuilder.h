@@ -46,6 +46,7 @@ int gSplitWeights[] = {
 #include <QtWebEngineWidgets/QWebEngineView>
 #include <QWebEngineSettings>
 #include "settings/settings_def.h"
+#include <Qsci/qsciscintilla.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -53,10 +54,10 @@ class Ui_MainWindow
 {
 
 public:
-    QMarkdownTextEdit *markdownEditor;
+    QsciScintilla *fileEditor;
     QWebEngineView *markdownPreviewView;
     QMenuBar *menuBar;
-//    QStatusBar *statusBar;
+    QStatusBar *statusBar;
     QHBoxLayout *bodyLayout;
     QSplitter *splitter;
     QTreeView *fileTree;
@@ -94,7 +95,6 @@ public:
 
         // TODO: handle window size changed
         mainWindow->resize(windowWidth, windowHeight);
-
         bodyLayout = new QHBoxLayout;
 //        +----------------------------------------------------------+
 //        |                 splitter                                 |
@@ -153,7 +153,6 @@ public:
 
         // drag & drop
         fileTree->setDragEnabled(true);
-//        fileTree->viewport()->setAcceptDrops(true);
         fileTree->setDropIndicatorShown(true);
         fileTree->setDragDropMode(QAbstractItemView::InternalMove);
         fileTree->setSelectionMode(QAbstractItemView::MultiSelection);
@@ -182,14 +181,10 @@ public:
         tocTree->setStyleSheet("QWidget {background-color:#ECECEC; color:#000000; selection-background-color:#DCDCDC; selection-color:#564C4F; }");
 
         // create markdown editor
-        markdownEditor = new QMarkdownTextEdit(mainWindow);
-        // TODO: add content change & save action -> window status
-//        QObject::connect(markdownEditor->document(), &QTextDocument::contentsChanged,
-//                [](int,int,int) {
-//            // setDocStatus
-//        });
+        fileEditor = new QsciScintilla(mainWindow);
+        fileEditor->zoomTo(4);
 
-        splitter->addWidget(markdownEditor);
+        splitter->addWidget(fileEditor);
         splitter->setStretchFactor(mdEditor_INDEX, 3);
 
         markdownPreviewView = new QWebEngineView(mainWindow);
@@ -211,31 +206,16 @@ public:
         splitter->setChildrenCollapsible(false);
 
         // we handle drag & drop globally in MainWindow, so disable it here
-        markdownEditor->viewport()->setAcceptDrops(false);
+        fileEditor->viewport()->setAcceptDrops(false);
 
         // sync scroll: editor -> previewer
-        bool hasTriggered = false;
-        QObject::connect(markdownEditor->verticalScrollBar(), &QScrollBar::valueChanged,
-                         [&](int newValue ) {
-//                             e new / e max = (p new) / p max
-                             int eMax = markdownEditor->verticalScrollBar()->maximum();
-                             if (eMax > 0.01 && !hasTriggered) {
-                                 hasTriggered = true;
-//                                 int newV = newValue * markdownPreviewView->verticalScrollBar()->maximum() / eMax;
-//                                 markdownPreviewView->verticalScrollBar()->setValue(newV);
-                                 hasTriggered = false;
-                             }});
-
-//        QObject::connect(markdownPreviewView->verticalScrollBar(), &QScrollBar::valueChanged,
-//                         [&](int newValue/* p new*/ ) {
-////                             e new / e max = (p new) / p max
-//                             int eMax = markdownEditor->verticalScrollBar()->maximum();
-//                             if (eMax > 0.01 && !hasTriggered) {
-//                                 hasTriggered = true;
-//                                 int newV = newValue * eMax  / markdownPreviewView->verticalScrollBar()->maximum();
-//                                 markdownEditor->verticalScrollBar()->setValue(newV);
-//                                 hasTriggered = false;
-//                             }});
+        // bool hasTriggered = false;
+        // QObject::connect(markdownEditor->verticalScrollBar(), &QScrollBar::valueChanged,
+        //      [&](int newValue ) {
+        //      int eMax = markdownEditor->verticalScrollBar()->maximum();
+        //      if (eMax > 0.01 && !hasTriggered) {
+        //          hasTriggered = true;
+        //      }});
 
         imageLabel = new QLabel;
         imageLabel->setBackgroundRole(QPalette::Base);
@@ -253,6 +233,8 @@ public:
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
         menuBar->setGeometry(QRect(0, 0, windowWidth, 22));
         mainWindow->setMenuBar(menuBar);
+        statusBar = new QStatusBar;
+        mainWindow->setStatusBar(statusBar);
 
 //        statusBar = new QStatusBar(mainWindow);
 //        statusBar->setObjectName(QString::fromUtf8("statusBar"));

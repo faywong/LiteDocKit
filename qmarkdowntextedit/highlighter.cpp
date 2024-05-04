@@ -14,7 +14,7 @@
 #include "highlighter.h"
 #include "scidown_md.h"
 
-HGMarkdownHighlighter::HGMarkdownHighlighter(QTextDocument *parent,
+HGMarkdownHighlighter::HGMarkdownHighlighter(QsciScintilla *parent,
                                              DMEditorDelegate *mainWindow,
                                              int aWaitInterval) : QObject(parent),
     mainWin(mainWindow),
@@ -28,8 +28,8 @@ HGMarkdownHighlighter::HGMarkdownHighlighter(QTextDocument *parent,
     timer->setSingleShot(true);
     timer->setInterval(aWaitInterval);
     connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
-    connect(document, SIGNAL(contentsChange(int,int,int)),
-            this, SLOT(handleContentsChange(int,int,int)));
+    connect(document, SIGNAL(textChanged()),
+            this, SLOT(handleContentsChange()));
 
     this->parse();
 }
@@ -155,11 +155,11 @@ void HGMarkdownHighlighter::setDefaultStyles()
 
 void HGMarkdownHighlighter::clearFormatting()
 {
-    QTextBlock block = document->firstBlock();
-    while (block.isValid()) {
-        block.layout()->clearAdditionalFormats();
-        block = block.next();
-    }
+    // QTextBlock block = document->firstBlock();
+    // while (block.isValid()) {
+    //     block.layout()->clearAdditionalFormats();
+    //     block = block.next();
+    // }
 }
 
 class tok {
@@ -177,115 +177,115 @@ bool operator<(const tok & lhs, const tok & rhs)
 
 void HGMarkdownHighlighter::highlight(pmh_element **parsedElement)
 {
-    if (parsedElement == nullptr) {
-        qDebug() << "parsedElement is NULL";
-        return;
-    }
+//     if (parsedElement == nullptr) {
+//         qDebug() << "parsedElement is NULL";
+//         return;
+//     }
 
-    if (highlightingStyles == nullptr) {
-        this->setDefaultStyles();
-    }
+//     if (highlightingStyles == nullptr) {
+//         this->setDefaultStyles();
+//     }
 
-    this->clearFormatting();
+//     this->clearFormatting();
 
-    QString textContent = document->toRawText();
-    std::vector<tok> tocs;
-    QStringList referredImages;
+//     QString textContent = document->toRawText();
+//     std::vector<tok> tocs;
+//     QStringList referredImages;
 
-    for (int i = 0; i < highlightingStyles->size(); i++)
-    {
-        HighlightingStyle style = highlightingStyles->at(i);
-        pmh_element *elem_cursor = parsedElement[style.type];
+//     for (int i = 0; i < highlightingStyles->size(); i++)
+//     {
+//         HighlightingStyle style = highlightingStyles->at(i);
+//         pmh_element *elem_cursor = parsedElement[style.type];
 
-        bool isTocElement = (style.type >= pmh_H1 && style.type <= pmh_H6);
+//         bool isTocElement = (style.type >= pmh_H1 && style.type <= pmh_H6);
 
-        while (elem_cursor != NULL)
-        {
-            if (elem_cursor->end <= elem_cursor->pos) {
-                elem_cursor = elem_cursor->next;
-                continue;
-            }
+//         while (elem_cursor != NULL)
+//         {
+//             if (elem_cursor->end <= elem_cursor->pos) {
+//                 elem_cursor = elem_cursor->next;
+//                 continue;
+//             }
 
-            if (style.type == pmh_IMAGE) {
-                referredImages << elem_cursor->address;
-            }
+//             if (style.type == pmh_IMAGE) {
+//                 referredImages << elem_cursor->address;
+//             }
 
-            if (isTocElement) {
-                tok t(elem_cursor->type, elem_cursor->pos, (int)(elem_cursor->end - elem_cursor->pos));
-                tocs.push_back(t);
-            }
+//             if (isTocElement) {
+//                 tok t(elem_cursor->type, elem_cursor->pos, (int)(elem_cursor->end - elem_cursor->pos));
+//                 tocs.push_back(t);
+//             }
 
-            // "The QTextLayout object can only be modified from the
-            // documentChanged implementation of a QAbstractTextDocumentLayout
-            // subclass. Any changes applied from the outside cause undefined
-            // behavior." -- we are breaking this rule here. There might be
-            // a better (more correct) way to do this.
+//             // "The QTextLayout object can only be modified from the
+//             // documentChanged implementation of a QAbstractTextDocumentLayout
+//             // subclass. Any changes applied from the outside cause undefined
+//             // behavior." -- we are breaking this rule here. There might be
+//             // a better (more correct) way to do this.
 
-            int startBlockNum = document->findBlock(elem_cursor->pos).blockNumber();
-            int endBlockNum = document->findBlock(elem_cursor->end).blockNumber();
-            for (int j = startBlockNum; j <= endBlockNum; j++)
-            {
-                QTextBlock block = document->findBlockByNumber(j);
-                QTextLayout *layout = block.layout();
-                QList<QTextLayout::FormatRange> list = layout->additionalFormats();
-                int blockpos = block.position();
-                QTextLayout::FormatRange r;
-                r.format = style.format;
+//             int startBlockNum = document->findBlock(elem_cursor->pos).blockNumber();
+//             int endBlockNum = document->findBlock(elem_cursor->end).blockNumber();
+//             for (int j = startBlockNum; j <= endBlockNum; j++)
+//             {
+//                 QTextBlock block = document->findBlockByNumber(j);
+//                 QTextLayout *layout = block.layout();
+//                 QList<QTextLayout::FormatRange> list = layout->additionalFormats();
+//                 int blockpos = block.position();
+//                 QTextLayout::FormatRange r;
+//                 r.format = style.format;
 
-                if (j == startBlockNum) {
-                    r.start = elem_cursor->pos - blockpos;
-                    r.length = (startBlockNum == endBlockNum)
-                                ? elem_cursor->end - elem_cursor->pos
-                                : block.length() - r.start;
-                } else if (j == endBlockNum) {
-                    r.start = 0;
-                    r.length = elem_cursor->end - blockpos;
-                } else {
-                    r.start = 0;
-                    r.length = block.length();
-                }
+//                 if (j == startBlockNum) {
+//                     r.start = elem_cursor->pos - blockpos;
+//                     r.length = (startBlockNum == endBlockNum)
+//                                 ? elem_cursor->end - elem_cursor->pos
+//                                 : block.length() - r.start;
+//                 } else if (j == endBlockNum) {
+//                     r.start = 0;
+//                     r.length = elem_cursor->end - blockpos;
+//                 } else {
+//                     r.start = 0;
+//                     r.length = block.length();
+//                 }
 
-                list.append(r);
-                layout->setAdditionalFormats(list);
-            }
+//                 list.append(r);
+//                 layout->setAdditionalFormats(list);
+//             }
 
-            elem_cursor = elem_cursor->next;
-        }
-    }
+//             elem_cursor = elem_cursor->next;
+//         }
+//     }
 
-    std::stable_sort(tocs.begin(), tocs.end());
-    QVector<QStandardItem*> tocItems;
-    QVector<QStandardItem*> flatTocItems;
+//     std::stable_sort(tocs.begin(), tocs.end());
+//     QVector<QStandardItem*> tocItems;
+//     QVector<QStandardItem*> flatTocItems;
 
-    for (std::vector<tok>::size_type i = 0; i < tocs.size(); i++) {
-        tok t = tocs[i];
-        int j = i;
-        QString keyword = textContent.mid(t.pos, t.len);
-//        qDebug()<<"keyword: " <<keyword;
-        keyword = keyword.replace(postfixRe, "");
-        QStandardItem *item = new QStandardItem(keyword);
-        const int posRole = Qt::UserRole + 1;
-        const int typeRole = Qt::UserRole + 2;
-        item->setData((qulonglong)t.pos, posRole);
-        item->setData((qint32)t.type, typeRole);
+//     for (std::vector<tok>::size_type i = 0; i < tocs.size(); i++) {
+//         tok t = tocs[i];
+//         int j = i;
+//         QString keyword = textContent.mid(t.pos, t.len);
+// //        qDebug()<<"keyword: " <<keyword;
+//         keyword = keyword.replace(postfixRe, "");
+//         QStandardItem *item = new QStandardItem(keyword);
+//         const int posRole = Qt::UserRole + 1;
+//         const int typeRole = Qt::UserRole + 2;
+//         item->setData((qulonglong)t.pos, posRole);
+//         item->setData((qint32)t.type, typeRole);
 
-        bool parentFound = false;
-        while (--j >= 0) {
-            if (tocs[j].type < t.type) { // 有更高级别的标题
-                flatTocItems[j]->appendRow(item);
-                parentFound = true;
-                break;
-            }
-        }
-        if (!parentFound) {
-            tocItems.push_back(item);
-        }
-        flatTocItems.push_back(item);
-    }
+//         bool parentFound = false;
+//         while (--j >= 0) {
+//             if (tocs[j].type < t.type) { // 有更高级别的标题
+//                 flatTocItems[j]->appendRow(item);
+//                 parentFound = true;
+//                 break;
+//             }
+//         }
+//         if (!parentFound) {
+//             tocItems.push_back(item);
+//         }
+//         flatTocItems.push_back(item);
+//     }
 
-    mainWin->updateToc(tocItems);
-    document->markContentsDirty(0, document->characterCount());
-    pmh_free_elements(parsedElement);
+//     mainWin->updateToc(tocItems);
+//     document->markContentsDirty(0, document->characterCount());
+//     pmh_free_elements(parsedElement);
 }
 
 void HGMarkdownHighlighter::parse()
@@ -294,14 +294,14 @@ void HGMarkdownHighlighter::parse()
     parseTaskFuture.cancel();
     toMdTaskFuture.cancel();
 
-    QString content = document->toPlainText();
+    QString content = document->text();
     if (content.length() > 1) {
         parseTaskFuture = QtConcurrent::run(&threadPool, [=]() {
-            QByteArray ba = content.toUtf8();
-            char *contentCString = (char *)ba.data();
-            pmh_element **result;
-            pmh_markdown_to_elements(contentCString, pmh_EXT_NOTES | pmh_EXT_STRIKE, &result);
-            emit parseFinished(result);
+            // QByteArray ba = content.toUtf8();
+            // char *contentCString = (char *)ba.data();
+            // pmh_element **result;
+            // pmh_markdown_to_elements(contentCString, pmh_EXT_NOTES | pmh_EXT_STRIKE, &result);
+            // emit parseFinished(result);
         });
 
         toMdTaskFuture = QtConcurrent::run(&threadPool, [=]() {
@@ -317,8 +317,7 @@ void HGMarkdownHighlighter::parse()
     }
 }
 
-void HGMarkdownHighlighter::handleContentsChange(int position, int charsRemoved,
-                                                 int charsAdded)
+void HGMarkdownHighlighter::handleContentsChange()
 {
 //    qDebug() << "contents changed. chars removed/added:" << charsRemoved << charsAdded;
     timer->stop();

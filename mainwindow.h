@@ -10,6 +10,7 @@
 #include "FullTextSearchWindow.h"
 #include "FileLocatorWindow.h"
 #include "CircleProgressBar.h"
+#include "highlighter.h"
 #include <QSimpleUpdater.h>
 
 namespace Ui {
@@ -76,6 +77,7 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+    HGMarkdownHighlighter *_highlighter;
     QString currentFilePath;
     QString currentRootDirPath;
     QSimpleUpdater* m_updater;

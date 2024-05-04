@@ -16,6 +16,7 @@
 #include <QRegularExpression>
 #include <QThreadPool>
 #include "EditorDelegate.h"
+#include "Qsci/qsciscintilla.h"
 
 extern "C" {
 #include "pmh_parser.h"
@@ -37,7 +38,7 @@ class HGMarkdownHighlighter : public QObject
     Q_OBJECT
 
 public:
-    HGMarkdownHighlighter(QTextDocument *parent, DMEditorDelegate *mainWindow, int aWaitInterval = 50);
+    HGMarkdownHighlighter(QsciScintilla *parent, DMEditorDelegate *mainWindow, int aWaitInterval = 50);
     void setStyles(QVector<HighlightingStyle> &styles);
     void highlight(pmh_element **result);
 
@@ -46,12 +47,12 @@ signals:
     void md2htmlFinished(const QString &html);
 
 private slots:
-    void handleContentsChange(int position, int charsRemoved, int charsAdded);
+    void handleContentsChange();
     void timerTimeout();
 
 private:
     DMEditorDelegate *mainWin;
-    QTextDocument *document;
+    QsciScintilla *document;
     QFuture<void> parseTaskFuture;
     QFuture<void> toMdTaskFuture;
     QVector<HighlightingStyle> *highlightingStyles;

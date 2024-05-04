@@ -24,6 +24,15 @@
 #include <QDesktopServices>
 #include <QTimer>
 #include "DisplayQueuedFilesAction.h"
+#include <Qsci/qscilexercpp.h>
+// #include <Qsci/qscilexermarkdown.h>
+#include <mdLexer.h>
+#include <Qsci/qscilexerxml.h>
+#include <Qsci/qscilexerhtml.h>
+#include <Qsci/qscilexerlua.h>
+#include <Qsci/qscilexercmake.h>
+#include <Qsci/qscilexerbash.h>
+#include <Qsci/qscilexerbatch.h>
 
 MainWindow::MainWindow(QWidget *parent, QString *dirPath) :
         QMainWindow(parent),
@@ -31,7 +40,8 @@ MainWindow::MainWindow(QWidget *parent, QString *dirPath) :
         currentFilePath(""),
         currentRootDirPath(""),
         searchWindow(nullptr),
-        findFileWindow(nullptr) {
+        findFileWindow(nullptr),
+        _highlighter(nullptr) {
     ui->setupUi(this);
     setupMenus();
     setAcceptDrops(true);
@@ -107,7 +117,8 @@ void MainWindow::handleTocClicked(const QItemSelection &selected, const QItemSel
         auto modelIndex = selectedList[0];
         qlonglong pos = ui->tocModel->data(modelIndex, Qt::UserRole + 1).toLongLong();
         qDebug() << "pos: " + pos;
-        ui->markdownEditor->jumpTo(pos);
+        // TODO:
+        // ui->markdownEditor->jumpTo(pos);
     }
 }
 
@@ -146,16 +157,30 @@ void MainWindow::openFile_l(const QString &filePath, size_t lineNo, bool needSel
 
         file.open(QFile::ReadOnly | QFile::Text);
         QTextStream fileToRead(&file);
-        // TODO: move file io into non-main thread
-
         QString text = fileToRead.readAll();
-        ui->markdownEditor->setText(text);
-        QTextBlock targetBlock = ui->markdownEditor->document()->findBlockByNumber(lineNo - 1);
-        if (targetBlock.isValid()) {
-            QTextCursor cursor(targetBlock);
-            ui->markdownEditor->moveCursor(QTextCursor::End);
-            ui->markdownEditor->setTextCursor(cursor);
-            ui->markdownEditor->ensureCursorVisible();
+        ui->fileEditor->setText(text);
+        ui->fileEditor->setFirstVisibleLine(lineNo);
+        if (filePath.endsWith(".cpp") || filePath.endsWith(".cc") || filePath.endsWith(".cxx")
+            || filePath.endsWith(".h") || filePath.endsWith(".hpp")) {
+            ui->fileEditor->setLexer(new QsciLexerCPP);
+        } else if (filePath.endsWith(".md")) {
+            ui->fileEditor->setLexer(new MdLexer);
+            if (_highlighter == nullptr) {
+                _highlighter = new HGMarkdownHighlighter(ui->fileEditor, dynamic_cast<DMEditorDelegate *>(this));
+                connect(_highlighter, SIGNAL(md2htmlFinished(const QString&)), this, SLOT(updateMarkdownPreview(const QString &)), Qt::QueuedConnection);
+            }
+        } else if (filePath.endsWith(".xml")) {
+            ui->fileEditor->setLexer(new QsciLexerXML);
+        } else if (filePath.endsWith(".html")) {
+            ui->fileEditor->setLexer(new QsciLexerHTML);
+        } else if (filePath.endsWith(".lua")) {
+            ui->fileEditor->setLexer(new QsciLexerLua);
+        } else if (filePath.endsWith(".cmake") || filePath.endsWith(".cmake.in") || filePath.endsWith("CMakeLists.txt")) {
+            ui->fileEditor->setLexer(new QsciLexerCMake);
+        } else if (filePath.endsWith(".sh")) {
+            ui->fileEditor->setLexer(new QsciLexerBash);
+        } else if (filePath.endsWith(".bat")) {
+            ui->fileEditor->setLexer(new QsciLexerBatch);
         }
 
         setDocStatus(fileInfo.fileName(), "");
@@ -447,7 +472,7 @@ void MainWindow::saveFileFromText(const QString &text) {
 }
 
 void MainWindow::saveFile() {
-    saveFileFromText(ui->markdownEditor->toPlainText());
+    saveFileFromText(ui->fileEditor->text());
 }
 
 void MainWindow::launchSettings() {
