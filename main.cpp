@@ -13,7 +13,7 @@
 #include <QMutex>
 
 const qint64 LOG_FILE_LIMIT = 3000000;
-const QString LOG_PATH = "/home/faywong/logs/";
+const QString LOG_PATH = "logs/";
 const QString LOG_FILENAME = "dockit.log";
 QMutex mutex;
 
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
-    qInstallMessageHandler(redirectDebugMessages);
+    // qInstallMessageHandler(redirectDebugMessages);
     SyncApp a(argc, argv);
     a.setStyleSheet(QString::fromUtf8("QScrollBar:vertical {"
                                       "    background:white;"
