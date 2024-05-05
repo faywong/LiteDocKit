@@ -6,11 +6,64 @@
 #include <QTranslator>
 #include "settings/settings_def.h"
 #include "syncapp.h"
+#include <QApplication>
+#include <QTextStream>
+#include <QFile>
+#include <QDateTime>
+#include <QMutex>
+
+const qint64 LOG_FILE_LIMIT = 3000000;
+const QString LOG_PATH = "/home/faywong/logs/";
+const QString LOG_FILENAME = "dockit.log";
+QMutex mutex;
+
+void redirectDebugMessages(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    mutex.lock();
+
+    QString txt;
+    QString datetime = QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
+
+    switch (type) {
+    case QtDebugMsg:
+        txt = QString("[Debug] ");
+        break;
+    case QtWarningMsg:
+        txt = QString("[Warning] ");
+        break;
+    case QtInfoMsg:
+        txt = QString("[Info] ");
+        break;
+    case QtCriticalMsg:
+        txt = QString("[Critical] ");
+        break;
+    case QtFatalMsg:
+        txt = QString("[Fatal] ");
+        break;
+    }
+
+    QString filePath = LOG_PATH + LOG_FILENAME;
+    QFile outFile(filePath);
+
+    if (outFile.size() > LOG_FILE_LIMIT) {
+        QFile::remove(filePath + ".1");
+        QFile::rename(filePath, filePath + ".1");
+        QFile::resize(filePath, 0);
+    }
+
+    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&outFile);
+    ts << datetime << txt << msg << endl;
+    outFile.close();
+
+    mutex.unlock();
+}
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+    qInstallMessageHandler(redirectDebugMessages);
     SyncApp a(argc, argv);
     a.setStyleSheet(QString::fromUtf8("QScrollBar:vertical {"
                                       "    background:white;"
@@ -61,26 +114,45 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setApplicationVersion(SYNC_FOLDER_VER);
     QCoreApplication::setOrganizationName("faywong personal");
-    QCoreApplication::setOrganizationDomain("syncfolder.com");
-    QCoreApplication::setApplicationName("SyncFolder");
+    QCoreApplication::setOrganizationDomain("litedockit.faywong.cc");
+    QCoreApplication::setApplicationName("LiteDocKit");
     QCommandLineParser parser;
-    parser.setApplicationDescription("SyncFolder");
+    parser.setApplicationDescription("Your lite document helper");
+
+
+    QCommandLineOption dirArg("dir", "Directory to open.", "dir");
+    parser.addOption(dirArg);
+
+    QCommandLineOption orgCaptureArg("orgcapture", "Org-capture url.", "org_capture");
+    parser.addOption(orgCaptureArg);
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addPositionalArgument("directory", "The directory to start in.");
     parser.process(a);
 
-    QString rootPath = parser.positionalArguments().isEmpty()
-        ? QString() : parser.positionalArguments().first();
+    QString rootPath;
+    QString orgCaptureValue;
 
+    if (parser.isSet(dirArg)) {
+        rootPath = parser.value(dirArg);
+    }
+    if (parser.isSet(orgCaptureArg)) {
+        orgCaptureValue = parser.value(orgCaptureArg);
+    }
     MainWindow w;
 
     if (rootPath.isEmpty()) {
         rootPath = SyncFolderSettings::getString(KEY_LAST_FOLDER);
+        qDebug() << "No rootPath value provided.";
+    } else {
+        qDebug() << "rootPath: " << rootPath;
+        w.setCurrentRootDirPath(rootPath);
     }
 
-    if (!rootPath.isEmpty()) {
-        w.setCurrentRootDirPath(rootPath);
+    if (!orgCaptureValue.isEmpty()) {
+        qDebug() << "orgCaptureValue: " << orgCaptureValue;
+        w.handleOrgCaptured(orgCaptureValue);
+    } else {
+        qDebug() << "No orgCaptureValue value provided.";
     }
 
     QString lastEditedFile = SyncFolderSettings::getString(KEY_LAST_FILE);
@@ -88,7 +160,14 @@ int main(int argc, char *argv[])
         w.openFile_l(lastEditedFile, 1, true);
     }
 
-    QObject::connect(&a, SIGNAL(urlOpened(const QString &)), &w, SLOT(handleOrgCaptured(const QString &)));
+    // 获取所有的命令行参数
+    QStringList arguments = a.arguments();
+
+    // 打印所有的命令行参数
+    qDebug() << "Command Line Arguments:";
+    for (const QString &arg : arguments) {
+        qDebug() << arg;
+    }
 
     w.show();
 

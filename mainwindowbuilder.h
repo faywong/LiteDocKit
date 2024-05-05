@@ -261,7 +261,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "SyncFolder", nullptr));
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "LiteDocKit", nullptr));
     } // retranslateUi
 };
 

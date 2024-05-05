@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=lite-dockit
+Comment=Your lite document kit, Intercept calls from emacsclient to trigger custom actions
+Categories=Other;
+Keywords=document management;org-protocol;
+Icon=dockit
+Type=Application
+Exec=lite-dockit --org-capture %u
+Terminal=false
+MimeType=x-scheme-handler/org-protocol;

@@ -12,7 +12,7 @@ bool MarkdownPreviewWebPage::acceptNavigationRequest(const QUrl &url, QWebEngine
         QDesktopServices::openUrl(url);
         return false;
     } else {
-        qDebug()<<"url: " << url;
+        // qDebug()<<"url: " << url;
         return QWebEnginePage::acceptNavigationRequest(url, type, isMainFrame);
     }
 }

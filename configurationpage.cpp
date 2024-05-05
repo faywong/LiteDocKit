@@ -10,7 +10,7 @@ ConfigurationPage::ConfigurationPage(QWidget *parent)
     QGroupBox *configGroup = new QGroupBox(tr("Sync Remote"));
 
     QComboBox *syncServiceTypeCombo = new QComboBox;
-    syncServiceTypeCombo->addItem(tr("SyncFolder cloud"));
+    syncServiceTypeCombo->addItem(tr("Sync cloud"));
     syncServiceTypeCombo->addItem(tr("Self deploy server"));
 
     QHBoxLayout *serviceTypeLayout = new QHBoxLayout;

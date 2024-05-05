@@ -6,7 +6,7 @@
 #include <QMessageBox>
 #include <QtDebug>
 
-const QString syncfolderUpdateUrl = "http://syncfolder.chengxi.fun/api/v1/updates.json";
+const QString syncfolderUpdateUrl = "http://litedockit.faywong.cc/api/v1/updates.json";
 
 #define SYNC_FOLDER_VER "0.1"
 

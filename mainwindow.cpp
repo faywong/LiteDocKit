@@ -96,7 +96,7 @@ void MainWindow::displayAppcast(const QString &url, const QByteArray &reply) {
 }
 
 void MainWindow::onUpdateDownloadFinished(const QString &url, const QString &path) {
-    qDebug() << "url: " << url << ", path: " << path;
+    // qDebug() << "url: " << url << ", path: " << path;
 }
 
 void MainWindow::handleOrgCaptured(const QString &url) {
@@ -542,9 +542,9 @@ void MainWindow::setupMenus() {
     fileMenu->addAction(tr("&New"), this, SLOT(newFile()),
                         QKeySequence::New);
 
-    fileMenu->addAction(tr("&Open..."), this, SLOT(openFile()));
+    fileMenu->addAction(tr("&Open file..."), this, SLOT(openFile()), QKeySequence(Qt::CTRL + Qt::Key_O));
 
-    fileMenu->addAction(tr("&Open dir..."), this, SLOT(openDirectory()));
+    fileMenu->addAction(tr("&Open directory..."), this, SLOT(openDirectory()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_O));
 
     fileMenu->addAction(tr("&Save..."), this, SLOT(saveFile()),
                         QKeySequence::Save);
@@ -552,7 +552,7 @@ void MainWindow::setupMenus() {
     fileMenu->addSeparator();
 
     fileMenu->addAction(tr("&Reveal in Tree View"), this, SLOT(revealInTreeView()),
-                        QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_J));
+                        QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_L));
 
     fileMenu->addAction(tr("&Sync"), this, SLOT(syncFiles()),
                         QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_S));
@@ -647,7 +647,7 @@ void MainWindow::revealInTreeView() {
 }
 
 void MainWindow::about() {
-    QMessageBox::about(this, tr("SyncFolder"),tr( SYNC_FOLDER_VER));
+    QMessageBox::about(this, tr("LiteDocKit"),tr( SYNC_FOLDER_VER));
 }
 
 void MainWindow::help() {

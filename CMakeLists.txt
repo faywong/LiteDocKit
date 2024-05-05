@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(syncfolder)
+project(LiteDocKit)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -40,7 +40,7 @@ ENDIF(QT5QSCINTILLA_FOUND)
 FILE(GLOB scidownSrcs 3rdparty/scidown/*.c 3rdparty/scidown/src/*.c 3rdparty/charter/src/*.c
         3rdparty/charter/src/csv_parser/*.c 3rdparty/charter/src/tinyexpr/*.c)
 
-add_executable(SyncFolder
+add_executable(lite-dockit
     FileIconProvider.cpp
     FileLocatorWindow.cpp
     FullTextSearchWindow.cpp
@@ -72,9 +72,10 @@ add_executable(SyncFolder
     3rdparty/scidown/bin/scidown.c
     3rdparty/scidown/bin/scidown_md.h uiwidgets/MarkdownPreviewWebPage.cpp uiwidgets/MarkdownPreviewWebPage.h
     mdLexer.h mdLexer.cpp
+    LiteDocKit.desktop
     )
 
-target_include_directories(SyncFolder PUBLIC
+target_include_directories(lite-dockit PUBLIC
         .
         uiwidgets
         qmarkdowntextedit
@@ -87,11 +88,11 @@ target_include_directories(SyncFolder PUBLIC
         3rdparty/QSimpleUpdater/src
         ${QT5QSCINTILLA_INCLUDE_DIR})
 
-set_target_properties(SyncFolder PROPERTIES
+set_target_properties(lite-dockit PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO
         )
 
-target_link_libraries(SyncFolder Qt5::Widgets Qt5::Concurrent Qt5::Network Qt5::WebEngineCore Qt5::WebEngineWidgets Qt5::WebChannel
+target_link_libraries(lite-dockit Qt5::Widgets Qt5::Concurrent Qt5::Network Qt5::WebEngineCore Qt5::WebEngineWidgets Qt5::WebChannel
             ${QT5QSCINTILLA_LIBRARY})
